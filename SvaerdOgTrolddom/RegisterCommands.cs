@@ -10,6 +10,7 @@ using SvaerdOgTroldom.Commands;
 using System;
 using System.Text.Json;
 using DiscordInteractions.Serialization;
+using SvaerdOgTrolddom.Commands;
 
 namespace SvaerdOgTroldom
 {
@@ -31,8 +32,8 @@ namespace SvaerdOgTroldom
             {
                 RollCommand.Definition,
                 FightRoundCommand.Definition,
-                PingCommand.Definition                
-
+                LuckCommand.Definition,
+                PingCommand.Definition  
             };
 
             var serializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = new LowerCaseNamingPolicy() };

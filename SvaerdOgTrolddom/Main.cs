@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using DiscordInteractions;
 using DiscordInteractions.Objects.Requests;
 using SvaerdOgTroldom.Commands;
+using SvaerdOgTrolddom.Commands;
 
 namespace SvaerdOgTroldom
 {
@@ -45,6 +46,7 @@ namespace SvaerdOgTroldom
                     case "ping": return new PingCommand().Execute();
                     case "rul": return new RollCommand(log).Execute(command.Data);                        
                     case "kæmp": return new FightRoundCommand(new RollCommand(log), log).Execute(command.Data);
+                    case "prøvlykken": return new LuckCommand(new RollCommand(log), log).Execute(command.Data);
                     default: { return new BadRequestResult(); }
                 }
             }
