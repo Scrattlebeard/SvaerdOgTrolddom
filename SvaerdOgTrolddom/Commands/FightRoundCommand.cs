@@ -9,13 +9,13 @@ namespace SvaerdOgTroldom.Commands
 {
     public class FightRoundCommand
     {
-        private RollCommand _roller;
-        private ILogger _log;        
+        private ILogger _log;
+        private DiceRoller _roller;        
 
-        public FightRoundCommand(RollCommand roller, ILogger log)
-        {
-            _roller = roller;
+        public FightRoundCommand(DiceRoller roller, ILogger log)
+        {            
             _log = log;
+            _roller = roller;
         }
 
         public static CommandDefinition Definition
@@ -48,13 +48,13 @@ namespace SvaerdOgTroldom.Commands
         public JsonResult Execute(ApplicationCommandData commandData)
         {
             var args = commandData.Options!.Select(o => int.Parse(o.Value)).ToList();
-            
-            var playerRes = _roller.Roll($"2d6+{args[0]}");
-            var playerSummary = $"L.A.R.S langer ud efter modstanderen med sit raketdrevne sværd og slår {_roller.SummarizeRolls()}";
+            _log.LogInformation($"Responding to \\kæmp command with args {args[0]} {args[1]}");
 
-            _roller.Reset();
-            var enemyRes = _roller.Roll($"2d6+{args[1]}");
-            var enemySummary = $"Modstanderen kæmper bravt tilbage med {_roller.SummarizeRolls()}";
+            var (playerRes, playerRolls, playerBonus) = _roller.Roll($"2d6+{args[0]}");
+            var playerSummary = $"L.A.R.S langer ud efter modstanderen med sit raketdrevne sværd og slår {_roller.SummarizeRolls(playerRolls, playerBonus)}";
+
+            var (enemyRes, enemyRolls, enemyBonus) = _roller.Roll($"2d6+{args[1]}");
+            var enemySummary = $"Modstanderen kæmper bravt tilbage med {_roller.SummarizeRolls(enemyRolls, enemyBonus)}";
 
             var res = playerRes > enemyRes ?
                 "L.A.R.S **vinder** og påfører fjenden et drabeligt sår!" :

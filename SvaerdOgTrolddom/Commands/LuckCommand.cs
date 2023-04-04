@@ -2,7 +2,6 @@
 using DiscordInteractions.Objects.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Prng;
 using SvaerdOgTroldom.Commands;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +11,13 @@ namespace SvaerdOgTrolddom.Commands
 {
     public class LuckCommand
     {
-        private RollCommand _roller;
         private ILogger _log;
+        private DiceRoller _roller;        
 
-        public LuckCommand(RollCommand roller, ILogger log)
-        {
-            _roller = roller;
+        public LuckCommand(DiceRoller roller, ILogger log)
+        {            
             _log= log;
+            _roller = roller;
         }
 
         public static CommandDefinition Definition
@@ -45,11 +44,13 @@ namespace SvaerdOgTrolddom.Commands
         public JsonResult Execute(ApplicationCommandData commandData)
         {
             var luck = int.Parse(commandData.Options.FirstOrDefault().Value);
-            var roll = _roller.Roll("2d6");
+            _log.LogInformation($"Responding to \\proevlykken command with arg {luck}");
+
+            var (res, rolls, _) = _roller.Roll("2d6");
 
             var msgBuilder = new StringBuilder($"L.A.R.S held er **{luck}**. ");
-            msgBuilder.AppendLine($"Han prøver lykken og slår {_roller.SummarizeRolls()}.");
-            msgBuilder.AppendLine(roll <= luck ? "L.A.R.S er **heldig**!" : "L.A.R.S er **uheldig**!");
+            msgBuilder.AppendLine($"Han prøver lykken og slår {_roller.SummarizeRolls(rolls)}.");
+            msgBuilder.AppendLine(res <= luck ? "L.A.R.S er **heldig**!" : "L.A.R.S er **uheldig**!");
             msgBuilder.AppendLine($"*(L.A.R.S held falder med én og er nu {luck - 1}.)*");
 
             return new JsonResult(InteractionResponse.WithContent(msgBuilder.ToString()));

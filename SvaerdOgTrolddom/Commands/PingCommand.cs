@@ -1,11 +1,18 @@
 ﻿using DiscordInteractions.Objects.Requests;
 using DiscordInteractions.Objects.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace SvaerdOgTroldom.Commands
 {
     public class PingCommand
     {
+        private readonly ILogger _log;
+        public PingCommand(ILogger logger)
+        {
+            _log = logger;
+        }
+
         public static CommandDefinition Definition
         { get =>
             new ()
@@ -18,6 +25,7 @@ namespace SvaerdOgTroldom.Commands
 
         public JsonResult Execute()
         {
+            _log.LogInformation("Responding to \\ping command...");
             return new JsonResult(InteractionResponse.WithContent("Pong!"));
         }
     }
